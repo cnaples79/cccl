@@ -217,6 +217,18 @@ public:
   using reference = ::cuda::std::invoke_result_t<_Fn&, ::cuda::std::iter_reference_t<_Iterators>...>;
   using pointer   = void;
 
+  // Internal helper functions to extract internals for device dispatch, must be a tuple for cub_transform_many
+  [[nodiscard]] _CCCL_API constexpr ::cuda::std::tuple<_Iterators...>
+  __base() && noexcept(::cuda::std::is_nothrow_move_constructible_v<__tuple_or_pair<_Iterators...>>)
+  {
+    return ::cuda::std::move(__current_);
+  }
+
+  [[nodiscard]] _CCCL_API constexpr _Fn __pred() && noexcept(::cuda::std::is_nothrow_move_constructible_v<_Fn>)
+  {
+    return ::cuda::std::move(*__func_);
+  }
+
   struct __zip_op_star
   {
     _Fn& __func_;
